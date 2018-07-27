@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+<!-- CSS formatting for page layout -->
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, Sans-serif;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+h1 {
+  font-size: 20px;
+  line-height: 25px;
+}
+
+h2 {
+  font-size: 14px;
+  line-height: 17px;
+  margin-bottom: 5px;
+}
+
+a {
+  text-decoration: none;
+  color: #2dc4b2;
+}
+
+#console {
+  position: absolute;
+  width: 285px;
+  padding: 10px 10px;
+  background-color: white;
+}
+</style>
+
+<!-- CSS for legend -->
+<style>
+.session {
+  margin-bottom: 10px;
+}
+
+.row {
+  height: 12px;
+  width: 100%;
+}
+
+.session .legend-scale ul {
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style: none;
+    }
+.session .legend-scale ul li {
+    display: block;
+    float: left;
+    width: 45px;
+    margin-top: 3px;
+    margin-bottom: 6px;
+    text-align: center;
+    font-size: 10px;
+    list-style: none;
+    }
+.session ul.legend-labels li span {
+    display: block;
+    float: left;
+    height: 15px;
+    width: 45px;
+    }
+</style>
+</head>
+
+<body>
+<!-- colors: ['rgba(255, 255, 255, 0)', '#ffffff', '#a3a3a3', '#80c8fc', '#4167f4', '#0ae897', '#000000', '#c10b0b', '#f7b709', '#70c11f', '#08c6db', '#007ad6', '#090b86' ]
+  Color Key:
+    0 - rgba(255, 255, 255, 0) = transparent white,
+    1 - #ffffff = rgb(255,255,255) = white,
+    2 - #a3a3a3 = rgb(163,163,163) = grey (HPA),
+    3 - #80c8fc = rgb(128,200,252) = sky blue (streams),
+    4 - #4167f4 = rgb(65,103,244) = cobalt blue (Ark River),
+    5 - #0ae897 = rgb(10,232,151) = sea foam grean (Syracuse Seg)
+    6 - #000000 = rgb(0,0,0) = black (no flow), #822121 = dark red
+    7 - #c10b0b = rgb(193,11,11) = red (<10%),
+    8 - #f7b709 = rgb(247,183,9) = orange (10-25%),
+    9 - #70c11f = rgb(112,193,31) = green (25-75%),
+    10 - #08c6db = rgb(8,198,219) = cerulean blue (75-90%),
+    11 - #007ad6 = rgb(0,122,214) = med blue (<90%),
+    12 - #090b86 = rgb(9,11,134) = indigo (very high flow)
+
+  Syracuse Streamflow Percentile Classification Breaks (ft = m)
+    min:	0.038
+    0.1:	13.8 = 0.391
+    0.25:	54.975 = 1.557
+    0.5:	132.3
+    0.75:	267.425 = 7.573
+    0.9:	530.05 = 15.009
+    1:  	586.1 = 16.597
+    max:	5962 = 168.825
+-->
+
+<meta charset='utf-8' />
+<title>Arkansas River Map</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+
+<!-- build HTML container for map & user control -->
+<div id="map" style="width: 580px; height: 400px"></div>
+
+<div id='console'>
+  <!-- <h1>Arkansas River</h1> -->
+  <div class='session'>
+    <h2>Percentile Historical Streamflow</h2>
+    <div class='legend-scale'>
+      <ul class='legend-labels'>
+        <!-- <li><span style='background:#822121;'></span></br>No Flow</li> -->
+        <li><span style='background:#c10b0b;'></span></br>< 10%</li>
+        <li><span style='background:#f7b709;'></span></br>10-25%</li>
+        <li><span style='background:#70c11f;'></span></br>25-75%</li>
+        <li><span style='background:#08c6db;'></span></br>75-90%</li>
+        <li><span style='background:#007ad6;'></span></br>> 90%</li>
+        <li><span style='background:#090b86;'></span></br>Extreme</br>Flow</li>
+      </ul>
+    </div>
+  <div class='session' id='sliderbar'>
+  <h2>Date: October <label id='active-year'>1950</label></h2>
+  <input id='slider' class='row' type='range' min='0' max='66' step='1' value='0' />
+  </div>
+</div>
+
+<!-- retrieve CSS files for formatting -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+   integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+   crossorigin=""/>
+<link href="https://api.mapbox.com/mapbox-gl-js/v0.36.0/mapbox-gl.css" rel="stylesheet" />
+
+
+<!-- calls script libraries -->
+<!-- JQUERY API - for accessing files on cPanel webserver -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+<!-- Mapbox API - pulls composite satellite imagery for map background -->
+<script src='https://api.mapbox.com/mapbox-gl-js/v0.36.0/mapbox-gl.js'></script>
+
+<!-- Leaflet Omnivore plugin - allows compatibility with KML/geoJSON - used for Google Earth and USGS REST services -->
+<script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+
+
+<!-- Begin JavaScript -->
+
+<script> // Initialize Mapbox map
+mapboxgl.accessToken = 'pk.eyJ1IjoibWlzdHlwb3J0ZXJrdSIsImEiOiJjajIyNG9oOGswMDViMndwaDQ3a2ZxY2NwIn0.Y4Paexki1dR1TqcKoQQO5w';
+
+var map = new mapboxgl.Map({
+  container: 'map', // container element id
+  style: 'mapbox://styles/mistyporterku/cj27vo2f300032sog0ibuz33x', // custom style pre-constructed in Mapbox Studio
+  center: [-99.377,38.578], // initial map center in [lon, lat]
+  zoom: 6
+});
+
+// Add zoom and rotation controls to the map.
+map.addControl(new mapboxgl.NavigationControl());
+
+// Add Syracuse stream segment
+map.on('load', function() {
+  map.addLayer({
+    id: 'SyracuseSite',
+    type: 'circle',
+    source: {
+      type: 'geojson',
+      data: "SyracyseSiteData.geojson"
+    },
+    paint: {
+      'circle-radius': 6,
+      'circle-stroke-width': 1,
+      'circle-color': {
+        property: 'Q',
+        stops: [
+          // [0.1, '#822121'],
+          [13.8, '#c10b0b'],
+          [54.975, '#f7b709'],
+          [267.425, '#70c11f'],
+          [530.05, '#08c6db'],
+          [586.1, '#007ad6'],
+          [5962, '#090b86']
+        ]
+      }
+    },
+    filter: ['>=', 'year', 1950],
+  });
+
+  // add data/link to time slider
+  document.getElementById('slider').addEventListener('input', function(e) {
+  // get the current year as an integer
+  var year = parseInt(e.target.value,10) + 1950;
+  // map.setFilter(layer-name, filter)
+  map.setFilter('SyracuseSite', ['==', 'year', year]);
+  document.getElementById('active-year').innerHTML = year;
+  });
+
+  // link to charts on site click
+  map.on('click', 'SyracuseSite', function () {
+    window.open("http://interactiveviz.dept.ku.edu/Syracuse");
+  });
+
+  // Change the cursor to a pointer when the it enters a feature in the 'symbols' layer.
+  map.on('mouseenter', 'SyracuseSite', function () {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to a cursor when it leaves.
+  map.on('mouseleave', 'SyracuseSite', function () {
+    map.getCanvas().style.cursor = '';
+  });
+
+  // Add Kansas State Boundary
+  map.addLayer({
+    id: 'KansasState',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: "KansasStateBoundary.geojson"
+    },
+    paint: {
+      'line-width': 1,
+      'line-color': '#000000'
+    }
+  });
+
+  // Add Kansas Counties
+  map.addLayer({
+    id: 'KansasCounties',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: "KansasCounties.geojson"
+    },
+    paint: {
+      'line-width': 1,
+      'line-color': '#000000'
+    }
+  });
+
+});   // END MAP
+
+</script>
+
+</body>
+</html>
