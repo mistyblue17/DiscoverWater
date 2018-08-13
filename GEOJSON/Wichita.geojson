@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "Wichita",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
+"features": [
+{ "type": "Feature", "properties": { "long": -97.33532, "lat": 37.64335, "site_no": 7144300, "site_nm": "WICHITA", "date": "1950-10", "year": 1950, "month": 10, "Q": 2423.0, "Q_m": 68.612, "GW": null, "GW_m": null, "PDSI": null, "PUMP": null, "PUMP_m": null }, "geometry": { "type": "Point", "coordinates": [ -97.33532, 37.64335 ] } }
+]
+}
