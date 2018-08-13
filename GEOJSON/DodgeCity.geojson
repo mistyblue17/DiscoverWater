@@ -1,8 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "DodgeCity",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
-"features": [
-{ "type": "Feature", "properties": { "long": -100.032913, "lat": 37.744743, "site_no": 7139500, "site_nm": "DODGE CITY", "date": "1950-10", "year": 1950, "month": 10, "Q": 357.2, "Q_m": 10.115, "GW": -55.8, "GW_m": -8.32, "PDSI": 0.6, "PUMP": null, "PUMP_m": null }, "geometry": { "type": "Point", "coordinates": [ -100.032913, 37.744743 ] } }
-]
-}

@@ -1,8 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "Coolidge",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
-"features": [
-{ "type": "Feature", "properties": { "long": -102.0115706, "lat": 38.0275129, "site_no": 7137500, "site_name": "COOLIDGE", "date": "1950-10", "Q": 181.2, "Q_m": 5.13, "GW": -27.3, "GW_m": -8.32, "PDSI": "0.6", "PUMP": 0.0, "PUMP_m": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -102.0115706, 38.0275129 ] } }
-]
-}

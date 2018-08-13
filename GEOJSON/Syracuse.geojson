@@ -1,8 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "Syracuse",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
-"features": [
-{ "type": "Feature", "properties": { "long": -101.7568387, "lat": 37.9661241, "site_no": 7138000, "site_nm": "SYRACUSE", "date": "1950-10", "year": 1950, "month": 10, "Q": 197.5, "Q_m": 5.59, "GW": -27.3, "GW_m": -8.32, "PDSI": 0.6, "PUMP": 0.0, "PUMP_m": 0.0, "charts": "http:\/\/interactiveviz.dept.ku.edu\/Syracuse\/" }, "geometry": { "type": "Point", "coordinates": [ -101.7568387, 37.9661241 ] } }
-]
-}
