@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "GreatBend",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
+"features": [
+{ "type": "Feature", "properties": { "long": -98.76425, "lat": 38.35307, "site_no": 7141300, "site_nm": "GREAT BEND", "date": "1950-10", "year": 1950, "month": 10, "Q": 1187.0, "Q_m": 33.612, "GW": null, "GW_m": null, "PDSI": null, "PUMP": null, "PUMP_m": null }, "geometry": { "type": "Point", "coordinates": [ -98.76425, 38.35307 ] } }
+]
+}
